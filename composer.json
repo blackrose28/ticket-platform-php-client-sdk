@@ -1,0 +1,24 @@
+{
+    "name": "ticket-platform/client-sdk",
+    "description": "Ticket Platform Client SDK",
+    "keywords": ["composer", "package","ticket","platform","library"],
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Le Van Chuong",
+            "email": "chuonglevan@vccorp.vn"
+        }
+    ],
+    "type": "library",
+    "require": {
+		"php": ">=7.0"
+    },
+	"require-dev": {
+		"phpunit/phpunit": "5.2.*"
+    },
+	"autoload": {
+        "psr-4": {
+            "TicketPlatform\\ClientSDK\\": "src/"
+        }
+    }
+}
