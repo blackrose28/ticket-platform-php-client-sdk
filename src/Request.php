@@ -1,29 +1,44 @@
 <?php namespace TicketPlatform\ClientSDK;
 
+use Omnilance\GraphQL\Client;
+
 /**
-*  A sample class
+*  Request class
 *
-*  Use this section to define what this class is doing, the PHPDocumentator will use this
-*  to automatically generate an API documentation using this information.
+*  This is class handle all request to Ticket Platform, including query, mutation.
 *
-*  @author yourname
+*  @author chuonglv
 */
 class Request{
 
-   /**  @var string $m_SampleProperty define here what this variable is for, do this for every instance variable */
-   private $m_SampleProperty = '';
- 
+  /**  @var Omnilance\GraphQL\Client $m_client This is graphql client for handling request */
+  private $m_client = null;
+
+  /** @var string $m_url This is url for the gateway */
+  private $m_url = '';
+
   /**
-  * Sample method 
+  * Set custom gateway url 
   *
-  * Always create a corresponding docblock for each method, describing what it is for,
-  * this helps the phpdocumentator to properly generator the documentation
+  * Set the gateway url
   *
-  * @param string $param1 A string containing the parameter, do this for each parameter to the function, make sure to make it descriptive
-  *
-  * @return string
+  * @param string $url Url to the new gateway
   */
-   public function method1($param1){
-			return "Hello World";
+   public function setUrl($url){
+       $this->m_url = $url;
+       $this->m_client = new Client('');
+       $this->m_client->setHost($url);
    }
+
+   /**
+    * Custom query or mutation
+    * 
+    * Use this method to request resource not define in sdk
+    * @param string $query The query or mutaion send to gateway
+    * 
+    * @return mixed
+    */
+    public function request($query){
+        return $this->m_client->response($query);
+    }
 }

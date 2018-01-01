@@ -11,7 +11,8 @@
     ],
     "type": "library",
     "require": {
-		"php": ">=7.0"
+        "php": ">=7.0",
+        "omnilance/graphql-php-client": "^0.0.5"
     },
 	"require-dev": {
 		"phpunit/phpunit": "5.2.*"
