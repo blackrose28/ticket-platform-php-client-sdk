@@ -1,9 +1,7 @@
 <?php
 namespace TicketPlatform\ClientSDK;
 
-use phpDocumentor\Reflection\Types\String_;
-
-class User{
+class UserSdk{
 
     private $_request;
     private $_gateway;
