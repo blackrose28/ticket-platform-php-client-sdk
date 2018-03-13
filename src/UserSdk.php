@@ -1,16 +1,11 @@
 <?php
 namespace TicketPlatform\ClientSDK;
+use Exception;
 
-class UserSdk{
-
-    private $_request;
-    private $_gateway;
+class UserSdk extends Sdk {
 
     public function __construct(){
-        $this->_request = new Request();
-        $congiguration = new Configuration();
-        $this->_gateway = $congiguration->getGateway();
-        $this->_request->setUrl($this->_gateway);
+        parent::__construct();
     }
 
     /**
@@ -19,7 +14,8 @@ class UserSdk{
      * @param array $user_info
      */
     public function initUser($user_info){
-        $mutation = 'mutation {
+        try{
+            $mutation = 'mutation {
               createUser(
                 vietId: "' . $user_info['id'] . '",
                 username:"' . $user_info['name'] . '",
@@ -47,11 +43,17 @@ class UserSdk{
                 }
               }
             }';
-        $response = $this->_request->request($mutation);;
-        if($response->__get('createUser')){
-           $user = (array)$response->__get('createUser');
-           return $user;
+            $response = $this->_request->request($mutation);;
+            if($response->__get('createUser')){
+                $user = $response->__get('createUser');
+                $user = json_decode(json_encode($user), true);
+                return $user;
+            }
+        } catch (Exception $exception){
+            error_log("\n".date('Y/m/d H:i:s')." -> ".__FILE__."- line ".__LINE__.": ".$exception->getMessage(), 3, "errors.log");
+            return null;
         }
+
         return null;
     }
 
@@ -61,19 +63,25 @@ class UserSdk{
      * @param int $department_id = 0 is get all system users
      */
     public function getUserList($department_id = 0){
-        $query = '{
-          getUserList(department_id: '.$department_id.'){
-            id
-            vietId
-            username
-            email
-            fullname
-          }
-        }';
-        $response = $this->_request->request($query);
-        if($response->__get('getUserList')){
-            $users = $response->__get('getUserList');
-            return $users;
+        try{
+            $query = '{
+                  getUserList(department_id: '.$department_id.'){
+                    id
+                    vietId
+                    username
+                    email
+                    fullname
+                  }
+                }';
+            $response = $this->_request->request($query);
+            if($response->__get('getUserList')){
+                $users = $response->__get('getUserList');
+                $users = json_decode(json_encode($users), true);
+                return $users;
+            }
+        } catch (Exception $exception){
+            error_log("\n".date('Y/m/d H:i:s')." -> ".__FILE__."- line ".__LINE__.": ".$exception->getMessage(), 3, "errors.log");
+            return null;
         }
         return null;
     }
@@ -83,19 +91,25 @@ class UserSdk{
      * @param int $user_id
      */
     public function getUser($user_id){
-        $query = '{
-              getUser(id: ' . $user_id . ' ){
-                id
-                username
-                email
-                fullname
-                avatar
-              }
-          }';
-        $response = $this->_request->request($query);
-        if($response->__get('getUser')){
-            $users = $response->__get('getUser');
-            return $users;
+        try{
+            $query = '{
+                  getUser(id: ' . $user_id . ' ){
+                    id
+                    username
+                    email
+                    fullname
+                    avatar
+                  }
+              }';
+            $response = $this->_request->request($query);
+            if($response->__get('getUser')){
+                $user = $response->__get('getUser');
+                $user = json_decode(json_encode($user), true);
+                return $user;
+            }
+        } catch (Exception $exception){
+            error_log("\n".date('Y/m/d H:i:s')." -> ".__FILE__."- line ".__LINE__.": ".$exception->getMessage(), 3, "errors.log");
+            return null;
         }
         return null;
     }
@@ -107,7 +121,8 @@ class UserSdk{
      * @param String $receiver_emails is a list of emails, separated by ',' character
      */
     public function inviteUser($sender_email, $sender_name, $receiver_emails, $department_id){
-        $mutation = 'mutation {
+        try{
+            $mutation = 'mutation {
                   inviteUser(
                     sender_email:"' . $sender_email . '",
                     sender_name: "' . $sender_name . '",               
@@ -123,10 +138,15 @@ class UserSdk{
                     }
                   }
                 }';
-        $response = $this->_request->request($mutation);
-        if($response->__get('inviteUser')){
-            $users = $response->__get('inviteUser');
-            return $users;
+            $response = $this->_request->request($mutation);
+            if($response->__get('inviteUser')){
+                $user = $response->__get('inviteUser');
+                $user = json_decode(json_encode($user), true);
+                return $user;
+            }
+        } catch (Exception $exception){
+            error_log("\n".date('Y/m/d H:i:s')." -> ".__FILE__."- line ".__LINE__.": ".$exception->getMessage(), 3, "errors.log");
+            return null;
         }
         return null;
     }

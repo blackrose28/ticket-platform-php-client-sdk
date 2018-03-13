@@ -38,7 +38,7 @@ class Request{
     * 
     * @return mixed
     */
-    public function request($query){
-        return $this->m_client->response($query);
+    public function request($query, $variables = [], $headers = []){
+        return $this->m_client->response($query, $variables, $headers);
     }
 }
