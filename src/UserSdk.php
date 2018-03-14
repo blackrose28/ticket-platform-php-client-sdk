@@ -6,6 +6,7 @@ class UserSdk extends Sdk {
 
     public function __construct(){
         parent::__construct();
+        include_once 'helper.php';
     }
 
     /**
@@ -50,7 +51,7 @@ class UserSdk extends Sdk {
                 return $user;
             }
         } catch (Exception $exception){
-            error_log("\n".date('Y/m/d H:i:s')." -> ".__FILE__."- line ".__LINE__.": ".$exception->getMessage(), 3, "errors.log");
+            addErrorsLog($exception->getMessage());
             return null;
         }
 
@@ -80,7 +81,7 @@ class UserSdk extends Sdk {
                 return $users;
             }
         } catch (Exception $exception){
-            error_log("\n".date('Y/m/d H:i:s')." -> ".__FILE__."- line ".__LINE__.": ".$exception->getMessage(), 3, "errors.log");
+            addErrorsLog($exception->getMessage());
             return null;
         }
         return null;
@@ -108,7 +109,7 @@ class UserSdk extends Sdk {
                 return $user;
             }
         } catch (Exception $exception){
-            error_log("\n".date('Y/m/d H:i:s')." -> ".__FILE__."- line ".__LINE__.": ".$exception->getMessage(), 3, "errors.log");
+            addErrorsLog($exception->getMessage());
             return null;
         }
         return null;
@@ -145,7 +146,7 @@ class UserSdk extends Sdk {
                 return $user;
             }
         } catch (Exception $exception){
-            error_log("\n".date('Y/m/d H:i:s')." -> ".__FILE__."- line ".__LINE__.": ".$exception->getMessage(), 3, "errors.log");
+            addErrorsLog($exception->getMessage());
             return null;
         }
         return null;

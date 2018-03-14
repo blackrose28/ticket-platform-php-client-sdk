@@ -6,6 +6,7 @@ class TicketSdk extends Sdk {
 
     public function __construct(){
         parent::__construct();
+        include_once 'helper.php';
     }
 
     public function getTicket($ticket_id){
@@ -38,7 +39,7 @@ class TicketSdk extends Sdk {
                 return $ticket;
             }
         } catch (Exception $exception){
-            error_log("\n".date('Y/m/d H:i:s')." -> ".__FILE__."- line ".__LINE__.": ".$exception->getMessage(), 3, "errors.log");
+            addErrorsLog($exception->getMessage());
             return null;
         }
         return null;
@@ -74,7 +75,7 @@ class TicketSdk extends Sdk {
                 }
             }
         } catch(Exception $exception){
-            error_log("\n".date('Y/m/d H:i:s')." -> ".__FILE__."- line ".__LINE__.": ".$exception->getMessage(), 3, "errors.log");
+            addErrorsLog($exception->getMessage());
             return null;
         }
         return null;
@@ -94,7 +95,7 @@ class TicketSdk extends Sdk {
                 return $ticket_id;
             }
         } catch(Exception $exception){
-            error_log("\n".date('Y/m/d H:i:s')." -> ".__FILE__."- line ".__LINE__.": ".$exception->getMessage(), 3, "errors.log");
+            addErrorsLog($exception->getMessage());
             return null;
         }
         return null;
@@ -129,18 +130,16 @@ class TicketSdk extends Sdk {
             }
 
         } catch(Exception $exception){
-            error_log("\n".date('Y/m/d H:i:s')." -> ".__FILE__."- line ".__LINE__.": ".$exception->getMessage(), 3, "errors.log");
+            addErrorsLog($exception->getMessage());
             return null;
         }
         return null;
     }
 
     public function createTicket($ticket_info){
-        include_once 'helper.php';
         try{
-            $params = $ticket_info;
             $user = null;
-            $assign_id = $params['assign_id'];
+            $assign_id = isset($ticket_info['assign_id']) ? $ticket_info['assign_id'] : 0;
             $query_assign = '{
                           getUser(id: ' . $assign_id . ' ){
                             id
@@ -158,13 +157,13 @@ class TicketSdk extends Sdk {
 
             if (isset($user['id'])) {
                 $create_params = '';
-                $ticket_type = isset($params['ticket_type']) ? $params['ticket_type'] : null;
-                foreach ($params as $key => $v) {
+                $ticket_type = isset($ticket_info['ticket_type']) ? $ticket_info['ticket_type'] : null;
+                foreach ($ticket_info as $key => $v) {
                     if(is_array($v)){
                         $v = implode(",",$v);
                     }
-                    if (key_exists($key . '_data_type', $params)) {
-                        if ($params[$key . '_data_type'] == 'Int' || $params[$key . '_data_type'] == 'Number') {
+                    if (key_exists($key . '_data_type', $ticket_info)) {
+                        if ($ticket_info[$key . '_data_type'] == 'Int' || $ticket_info[$key . '_data_type'] == 'Number') {
                             $create_params .= ', ' . $key . ': ' . trim($v);
                         } else {
                             if (is_array($v)) {
@@ -202,15 +201,103 @@ class TicketSdk extends Sdk {
                     $ticket = resolveCustomFields(json_decode(json_encode($ticket), true));
                     return $ticket;
                 } else {
-                    error_log("\n".date('Y/m/d H:i:s')." -> ".__FILE__."- line ".__LINE__.": \n".$result, 3, "errors.log");
+                    addErrorsLog($result);
                     return null;
                 }
             } else {
-                error_log("\n".date('Y/m/d H:i:s')." -> ".__FILE__."- line ".__LINE__.": Assigned user does not exist", 3, "errors.log");
+                addErrorsLog("Assigned user does not exist");
                 return null;
             }
         } catch(Exception $exception){
-            error_log("\n".date('Y/m/d H:i:s')." -> ".__FILE__."- line ".__LINE__.": ".$exception->getMessage(), 3, "errors.log");
+            addErrorsLog($exception->getMessage());
+            return null;
+        }
+    }
+
+    public function updateTicket($ticket_info){
+        try {
+            $params = $ticket_info;
+            $update_params = '';
+            $ticket_type = isset($params['ticket_type']) ? $params['ticket_type'] : null;
+            unset($params['ticket_type']);
+            if (key_exists('id', $params)) {
+                $params['id_data_type'] = 'Int';
+            }
+            foreach ($params as $key => $v) {
+                if (key_exists($key . '_data_type', $params)) {
+                    if ($params[$key . '_data_type'] == 'Int' || $params[$key . '_data_type'] == 'Number') {
+                        $update_params .= ', ' . $key . ': ' . $v;
+                    } else {
+                        if (is_array($v)) {
+                            $v = rtrim(implode(',', $v), ',');
+                        }
+                        $update_params .= ', ' . $key . ': "' . $v . '"';
+                    }
+
+                }
+            }
+
+            $update_params = trim($update_params, ', ');
+            $update_ticket = 'mutation {
+              updateTicket(' . $update_params . '){
+                id
+                title
+                desc
+                deadline
+                created_date
+                ticket_type_id
+                custom_fields
+                version
+                reference_user_ids
+                group {id name}
+                status {id name}
+                priority{id name}
+                owner{id email fullname username}
+                assign{id email fullname username}
+              }
+            }';
+
+            $result = $this->_request->request($update_ticket, array('ticket_type' => $ticket_type));
+            if($result->__get('updateTicket')){
+                $ticket = $result->__get('updateTicket');
+                $ticket = resolveCustomFields(json_decode(json_encode($ticket), true));
+                return $ticket;
+            } else {
+                addErrorsLog($result);
+                return null;
+            }
+        } catch(Exception $exception){
+            addErrorsLog($exception->getMessage());
+            return null;
+        }
+    }
+
+    public function delete($ticket_info){
+        try{
+            $ticket_type = isset($ticket_info['ticket_type']) ? $ticket_info['ticket_type'] : null;
+            if($ticket_type){
+                $delete_ticket = 'mutation{
+                  deleteTicket(id: ' . $ticket_info['id'] . '){
+                    id
+                    is_enable
+                  }
+                }';
+                $result = $this->_request->request($delete_ticket, array('ticket_type' => $ticket_type));
+                if($result->__get('deleteTicket')){
+                    $ticket = $result->__get('deleteTicket');
+                    $ticket = resolveCustomFields(json_decode(json_encode($ticket), true));
+                    return $ticket;
+                } else {
+                    addErrorsLog($result);
+                    return null;
+                }
+            } else{
+                addErrorsLog("Ticket type is null");
+                return null;
+            }
+
+        } catch(Exception $exception){
+            addErrorsLog($exception->getMessage());
             return null;
         }
     }

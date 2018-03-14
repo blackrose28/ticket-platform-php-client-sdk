@@ -10,3 +10,7 @@ function resolveCustomFields($ticket){
     unset($ticket['custom_fields']);
     return $ticket;
 }
+
+function addErrorsLog($message){
+    error_log("\n".date('Y/m/d H:i:s')." -> ".__FILE__."- line ".__LINE__.": \n".$message, 3, "errors.log");
+}
