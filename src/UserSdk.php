@@ -17,7 +17,7 @@ class UserSdk extends Sdk {
     public function initUser($user_info){
         try{
             $mutation = 'mutation {
-              createUser(
+              initUser(
                 vietId: "' . $user_info['id'] . '",
                 username:"' . $user_info['name'] . '",
                 email: "' . $user_info['email'] . '",               
