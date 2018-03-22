@@ -7,7 +7,7 @@ class Configuration{
 
     public function __construct(){
         include_once 'config.php';
-        $this->_gateway_url = GATEWAY_URL;
+        $this->_gateway_url = GATEWAYJS_URL;
     }
 
     public function getGateway(){
