@@ -6,10 +6,15 @@ class Configuration{
     private $_gateway_url;
 
     public function __construct(){
-        $this->_gateway_url = 'http://gateway.test/shorthand_sdk.php';
+        include_once 'config.php';
+        $this->_gateway_url = GATEWAY_URL;
     }
 
     public function getGateway(){
         return $this->_gateway_url;
+    }
+
+    public function setGateway($url){
+        $this->_gateway_url = $url;
     }
 }
