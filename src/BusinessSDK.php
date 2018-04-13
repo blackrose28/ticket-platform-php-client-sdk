@@ -1,4 +1,5 @@
 <?php
+
 namespace TicketPlatform\ClientSDK;
 use Exception;
 class BusinessSDK extends Sdk{
@@ -59,6 +60,52 @@ class BusinessSDK extends Sdk{
         }catch (Exception $exception){
             addErrorsLog($exception->getMessage());
             return null;
+        }
+    }
+    //get business by user
+    public function getBusinessByUser($user_id){
+        try{
+            $query = '{
+              getBusinessByUser(user_id: ' . $user_id . '){
+                id,
+                name,
+                description,
+                main_ticket_type_id,
+                department_id,
+                user_id
+              }
+            }';
+            $resp = $this->_request->request($query);
+            if ($resp->__get('getBusinessByUser')) {
+                $business = \GuzzleHttp\json_encode($resp->__get('getBusinessByUser'));
+                $business = \GuzzleHttp\json_decode($business, true);
+                return $business;
+            }
+        } catch (Exception $exception){
+            echo $exception->getMessage();
+        }
+    }
+    //get business by id
+    public function getBusinessByIds($business_ids){
+        try{
+            $query = '{
+              getBusinessByIds(business_ids: "' . $business_ids . '"){
+                id,
+                name,
+                description,
+                main_ticket_type_id,
+                department_id,
+                user_id
+              }
+            }';
+            $resp = $this->_request->request($query);
+            if ($resp->__get('getBusinessByIds')) {
+                $business = \GuzzleHttp\json_encode($resp->__get('getBusinessByIds'));
+                $business = \GuzzleHttp\json_decode($business, true);
+                return $business;
+            }
+        } catch (Exception $exception){
+            echo $exception->getMessage();
         }
     }
 }
