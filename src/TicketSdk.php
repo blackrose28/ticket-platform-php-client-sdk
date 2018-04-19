@@ -6,7 +6,6 @@ class TicketSdk extends Sdk {
 
     public function __construct(){
         parent::__construct();
-        include_once 'helper.php';
     }
 
     public function getTicket($ticket_id){

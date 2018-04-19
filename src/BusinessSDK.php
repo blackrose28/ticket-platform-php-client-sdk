@@ -6,7 +6,6 @@ class BusinessSDK extends Sdk{
     public function __construct()
     {
         parent::__construct();
-        include_once 'helper.php';
     }
     //save business
     public function saveBusiness($business)

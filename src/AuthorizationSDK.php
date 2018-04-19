@@ -7,7 +7,6 @@ class AuthorizationSDK extends Sdk
     public function __construct()
     {
         parent::__construct();
-        include_once 'helper.php';
     }
     //get all role permission
     public function getAllRolePerms(){

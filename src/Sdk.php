@@ -11,5 +11,6 @@ class Sdk{
         $congiguration = new Configuration();
         $this->_gateway = $congiguration->getGateway();
         $this->_request->setUrl($this->_gateway);
+        include_once 'helper.php';
     }
 }

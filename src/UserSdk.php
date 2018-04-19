@@ -6,7 +6,6 @@ class UserSdk extends Sdk {
 
     public function __construct(){
         parent::__construct();
-        include_once 'helper.php';
     }
 
     /**
