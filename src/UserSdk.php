@@ -14,6 +14,7 @@ class UserSdk extends Sdk {
      * @param array $user_info
      */
     public function initUser($user_info){
+        $user = null;
         try{
             $mutation = 'mutation {
               initUser(
@@ -44,17 +45,15 @@ class UserSdk extends Sdk {
               }
             }';
             $response = $this->_request->request($mutation);;
-            if($response->__get('createUser')){
-                $user = $response->__get('createUser');
+            if($response->__get('initUser')){
+                $user = $response->__get('initUser');
                 $user = json_decode(json_encode($user), true);
-                return $user;
             }
+            return $user;
         } catch (Exception $exception){
             addErrorsLog($exception->getMessage());
             return null;
         }
-
-        return null;
     }
 
     /**
