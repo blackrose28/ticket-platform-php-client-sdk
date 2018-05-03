@@ -11,26 +11,35 @@ class BusinessSDK extends Sdk{
     public function saveBusiness($business)
     {
         try {
-            $mutation = '
-              mutation{
-              createBusiness(
-                   business_id: ' . $business['business_id'] . '
-                   name:"' . $business['name'] . '",
-                   department_id: ' . $business['department_id'] . ',
-                   description: "' . $business['desc'] . '",
-                   user_id: ' . $business['user_id'] . '
-                   )
-                  {
-                   id,
-                   main_ticket_type_id
-                  },
-              }
-            ';
-            $resp = $this->_request->request($mutation);
-            if ($resp->__get('createBusiness')) {
-                $business = \GuzzleHttp\json_encode($resp->__get('createBusiness'));
-                $business = \GuzzleHttp\json_decode($business, true);
-                return $business;
+            $business_id = isset($business['business_id']) ? $business['business_id'] : 0;
+            $business_name = isset($business['name']) ? $business['name'] : '';
+            $department_id = isset($business['department_id']) ? $business['department_id'] : 0;
+            $business_desc = isset($business['desc']) ? $business['desc'] : '';
+            $user_id = isset($business['user_id']) ? $business['user_id'] : 0;
+            if ($business_name != '' && $department_id != 0 && $user_id != 0) {
+                $mutation = '
+                  mutation{
+                  createBusiness(
+                       business_id: ' . $business_id . '
+                       name:"' . $business_name . '",
+                       department_id: ' . $department_id . ',
+                       description: "' . $business_desc . '",
+                       user_id: ' . $user_id . '
+                       )
+                      {
+                       id,
+                       main_ticket_type_id
+                      },
+                  }
+                ';
+                $resp = $this->_request->request($mutation);
+                if ($resp->__get('createBusiness')) {
+                    $business = \GuzzleHttp\json_encode($resp->__get('createBusiness'));
+                    $business = \GuzzleHttp\json_decode($business, true);
+                    return $business;
+                }
+            }else{
+                return false;
             }
         }catch (Exception $exception){
             addErrorsLog($exception->getMessage());

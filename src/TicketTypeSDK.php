@@ -7,7 +7,6 @@ class TicketTypeSDK extends Sdk{
     {
         parent::__construct();
     }
-
     //get all ticket type
     public function getAllTicketType(){
         try {
@@ -59,22 +58,30 @@ class TicketTypeSDK extends Sdk{
     //create ticket type
     public function createTicketType($ticket_type){
         try {
-            $mutation = 'mutation{
-             createTicketType(
-                name:"' . $ticket_type['name_ticket'] . '",
-                desc: "' . $ticket_type['desc_ticket'] . '", 
-                business_id:' . $ticket_type['business_id'] . ',
-                department_id: ' . $ticket_type['department_id'] . '
-                ){
-                   id
-                 }
-              }
-            ';
-            $resp = $this->_request->request($mutation);
-            if ($resp->__get('createTicketType')) {
-                $tickettpyes = \GuzzleHttp\json_encode($resp->__get('createTicketType'));
-                $tickettpyes = \GuzzleHttp\json_decode($tickettpyes, true);
-                return $tickettpyes;
+            $name = isset($ticket_type['name_ticket']) ? $ticket_type['name_ticket'] : '';
+            $desc = isset($ticket_type['desc_ticket']) ? $ticket_type['desc_ticket'] : '';
+            $business_id = isset($ticket_type['business_id']) ? $ticket_type['business_id'] :0;
+            $department_id = isset($ticket_type['department_id']) ? $ticket_type['department_id'] : 0;
+            if ($name != '' && $department_id != 0) {
+                $mutation = 'mutation{
+                     createTicketType(
+                        name:"' . $name . '",
+                        desc: "' . $desc . '", 
+                        business_id:' . $business_id . ',
+                        department_id: ' . $department_id . '
+                        ){
+                           id
+                         }
+                      }
+                    ';
+                $resp = $this->_request->request($mutation);
+                if ($resp->__get('createTicketType')) {
+                    $tickettpyes = \GuzzleHttp\json_encode($resp->__get('createTicketType'));
+                    $tickettpyes = \GuzzleHttp\json_decode($tickettpyes, true);
+                    return $tickettpyes;
+                }
+            }else{
+                return false;
             }
         }catch (Exception $exception){
             addErrorsLog($exception->getMessage());
@@ -85,17 +92,24 @@ class TicketTypeSDK extends Sdk{
     //delete ticket type
     public function delTicketType($ticket_type){
         try {
-            $mutation = 'mutation{
-                deleteTicketType(id:' . $ticket_type['id'] . ', business_id: ' . $ticket_type['business_id'] . ', version:' . $ticket_type['version'] . '){
-                       id
+            $ticket_type_id = isset($ticket_type['id']) ? $ticket_type['id'] : 0;
+            $business_id = isset($ticket_type['business_id']) ? $ticket_type['business_id'] : 0;
+            $version = isset($ticket_type['version']) ? $ticket_type['version'] : 0;
+            if ($ticket_type_id != 0 && $business_id != 0 && $version != 0) {
+                $mutation = 'mutation{
+                    deleteTicketType(id:' . $ticket_type_id . ', business_id: ' . $business_id . ', version:' . $version . '){
+                           id
+                      }
                   }
-              }
-            ';
-            $resp = $this->_request->request($mutation);
-            if ($resp->__get('deleteTicketType')) {
-                $tickettpyes = \GuzzleHttp\json_encode($resp->__get('deleteTicketType'));
-                $tickettpyes = \GuzzleHttp\json_decode($tickettpyes, true);
-                return $tickettpyes;
+                ';
+                $resp = $this->_request->request($mutation);
+                if ($resp->__get('deleteTicketType')) {
+                    $tickettpyes = \GuzzleHttp\json_encode($resp->__get('deleteTicketType'));
+                    $tickettpyes = \GuzzleHttp\json_decode($tickettpyes, true);
+                    return $tickettpyes;
+                }
+            }else{
+                echo "Error. Check parameter!";
             }
         }catch (Exception $exception){
             addErrorsLog($exception->getMessage());
@@ -105,15 +119,21 @@ class TicketTypeSDK extends Sdk{
     //ticket type main
     public function ticketTypeMain($main){
         try {
-            $mutation = 'mutation{
-                updateMainTicketType(id:' . $main['id'] . ', main:' . $main['main'] . ')
-              }
-            ';
-            $resp = $this->_request->request($mutation);
-            if ($resp->__get('updateMainTicketType')) {
-                $tickettpyes = \GuzzleHttp\json_encode($resp->__get('updateMainTicketType'));
-                $tickettpyes = \GuzzleHttp\json_decode($tickettpyes, true);
-                return $tickettpyes;
+            $id = isset($main['id']) ? $main['id'] : 0;
+            $main_value = isset($main['main']) ? $main['main'] : '';
+            if ($id != 0 && $main_value != '') {
+                $mutation = 'mutation{
+                    updateMainTicketType(id:' . $main['id'] . ', main:' . $main['main'] . ')
+                  }
+                ';
+                $resp = $this->_request->request($mutation);
+                if ($resp->__get('updateMainTicketType')) {
+                    $tickettpyes = \GuzzleHttp\json_encode($resp->__get('updateMainTicketType'));
+                    $tickettpyes = \GuzzleHttp\json_decode($tickettpyes, true);
+                    return $tickettpyes;
+                }
+            }else{
+                echo  'Error. Check parametter!';
             }
         }catch (Exception $exception){
             addErrorsLog($exception->getMessage());
@@ -254,6 +274,4 @@ class TicketTypeSDK extends Sdk{
             addErrorsLog($exception->getMessage());
         }
     }
-
-
 }

@@ -161,23 +161,30 @@ class AuthorizationSDK extends Sdk
     //create role
     public function createRole($post){
         try {
-            $mutation = '
-              mutation{
-              authorization_create_role(
-                   name:"' . $post['name'] . '",
-                   desc: "' . $post['description'] . '",
-                   department_id: ' . $post["department_id"] . '
-                   )
-                  {
-                   ID
-                  },
-              }
-            ';
-            $resp = $this->_request->request($mutation);
-            if ($resp->__get('authorization_create_role')) {
-                $roles = \GuzzleHttp\json_encode($resp->__get('authorization_create_role'));
-                $roles = \GuzzleHttp\json_decode($roles, true);
-                return $roles;
+            $name = isset($post['name']) ? $post['name'] : '';
+            $desc = isset($post['description']) ? $post['description'] : '';
+            $department_id = isset($post["department_id"]) ? $post["department_id"] : 0;
+            if ($name != '' && $department_id != 0) {
+                $mutation = '
+                      mutation{
+                      authorization_create_role(
+                           name:"' . $name . '",
+                           desc: "' . $desc . '",
+                           department_id: ' . $department_id . '
+                           )
+                          {
+                           ID
+                          },
+                      }
+                    ';
+                $resp = $this->_request->request($mutation);
+                if ($resp->__get('authorization_create_role')) {
+                    $roles = \GuzzleHttp\json_encode($resp->__get('authorization_create_role'));
+                    $roles = \GuzzleHttp\json_decode($roles, true);
+                    return $roles;
+                }
+            }else{
+                return false;
             }
         }catch (Exception $exception){
             addErrorsLog($exception->getMessage());
@@ -187,24 +194,32 @@ class AuthorizationSDK extends Sdk
     //edit role
     public function editRole($post){
         try {
-            $mutation = '
-              mutation{
-              authorization_edit_role(
-                   id: ' . $post['id'] . '
-                   name:"' . $post['name'] . '",
-                   desc: "' . $post['description'] . '",
-                   department_id: ' . $post['department_id'] . '
-                   )
-                  {
-                   ID
-                  },
-              }
-            ';
-            $resp = $this->_request->request($mutation);
-            if ($resp->__get('authorization_edit_role')) {
-                $roles = \GuzzleHttp\json_encode($resp->__get('authorization_edit_role'));
-                $roles = \GuzzleHttp\json_decode($roles, true);
-                return $roles;
+            $id = isset($post['id']) ? $post['id'] :0;
+            $name = isset($post['name']) ? $post['name'] : '';
+            $desc = isset($post['description']) ? $post['description'] : '';
+            $department_id = isset($post['department_id']) ? $post['department_id'] : 0;
+            if ($id != 0 && $name != '' && $department_id != 0) {
+                $mutation = '
+                  mutation{
+                  authorization_edit_role(
+                       id: ' . $id . '
+                       name:"' . $name . '",
+                       desc: "' . $desc . '",
+                       department_id: ' . $department_id . '
+                       )
+                      {
+                       ID
+                      },
+                  }
+                ';
+                $resp = $this->_request->request($mutation);
+                if ($resp->__get('authorization_edit_role')) {
+                    $roles = \GuzzleHttp\json_encode($resp->__get('authorization_edit_role'));
+                    $roles = \GuzzleHttp\json_decode($roles, true);
+                    return $roles;
+                }
+            }else{
+                return false;
             }
         }catch (Exception $exception){
             addErrorsLog($exception->getMessage());
