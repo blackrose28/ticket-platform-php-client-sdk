@@ -6,36 +6,41 @@ class TicketSdk extends Sdk {
 
     public function __construct(){
         parent::__construct();
+        include_once 'helper.php';
     }
 
-    public function getTicket($ticket_id){
+    public function getTicket($ticket_id, $user_id){
         try{
-            $query = '{
-              getTicket(id: ' . $ticket_id . '){
-                id
-                title
-                desc
-                deadline
-                created_date
-                ticket_type_id
-                version
-                custom_fields
-                version
-                parental_id
-                reference_user_ids
-                extend_deadline
-                group {id name}
-                status {id name}
-                priority{id name}
-                owner{id email fullname username}
-                assign{id email fullname username}
-              }
-            }';
-            $response = $this->_request->request($query);
-            if($response->__get('getTicket')){
-                $ticket = $response->__get('getTicket');
-                $ticket = json_decode(json_encode($ticket), true);
-                return $ticket;
+            if($ticket_id && $user_id){
+                $query = '{
+                      getTicket(ticket_id: ' . $ticket_id . ', user_id: '. $user_id .'){
+                        id
+                        title
+                        desc
+                        deadline
+                        created_date
+                        ticket_type_id
+                        version
+                        custom_fields
+                        version
+                        parent_id
+                        reference_user_ids
+                        extend_deadline
+                        group {id name}
+                        status {id name}
+                        priority{id name}
+                        owner{id email fullname username}
+                        assign{id email fullname username}
+                      }
+                    }';
+                $response = $this->_request->request($query);
+                if($response->__get('getTicket')){
+                    $ticket = $response->__get('getTicket');
+                    $ticket = json_decode(json_encode($ticket), true);
+                    return $ticket;
+                }
+            } else {
+                addErrorsLog("getTicket: Check your ticket_id or user_id");
             }
         } catch (Exception $exception){
             addErrorsLog($exception->getMessage());
@@ -44,43 +49,60 @@ class TicketSdk extends Sdk {
         return null;
     }
 
-    public function getTicketList($ticket_type_id, $version){
+    public function getTicketList($user_id, $business_id, $status_id, $title, $owner_id, $assign_id, $ticket_id, $page, $ticket_type_id, $time_from, $time_to, $limit){
+        $ticket_list = null;
         try{
-            if($ticket_type_id && $version){
-                $query = '{
-                  getTicketList(ticket_type_id: ' . $ticket_type_id . ',version:'.$version.'){
-                    id
-                    title
-                    desc
-                    deadline
-                    created_date
-                    ticket_type_id
-                    version
-                    custom_fields
-                    version
-                    reference_user_ids
-                    group {id name}
-                    status {id name}
-                    priority{id name}
-                    owner{id email fullname username}
-                    assign{id email fullname username}
-                  }
-                }';
-                $response = $this->_request->request($query);
-                if($response->__get('getTicketList')){
-                    $ticket_list = $response->__get('getTicketList');
-                    $ticket_list = json_decode(json_encode($ticket_list), true);
-                    return $ticket_list;
-                }
+            $page         = $page ? $page : 1;
+            $ticket_id    = $ticket_id ? $ticket_id : 0;
+            $title        = $title ? $title : "";
+            $status_id    = $status_id ? $status_id : 0;
+            $owner_id     = $owner_id ? $owner_id : 0;
+            $assign_id    = $assign_id ? $assign_id : 0;
+            $user_id  = $user_id ? $user_id : 0;
+            $business_id = $business_id ? $business_id : 0;
+            $ticket_type_id = $ticket_type_id ? $ticket_type_id : '';
+            $time_from = $time_from ? $time_from : '';
+            $time_to = $time_to ? $time_to : '';
+            $limit = $limit ? $limit : 5;
+            $query = '{
+                getTicketListnew(user_id: '.$user_id.', business_id: '.$business_id.', status_id : '.$status_id.', title: "'.$title.'", owner_id: '.$owner_id.', ticket_type_id: "'.$ticket_type_id.'",assign_id: '.$assign_id.',ticket_id:'.$ticket_id.',time_from:"'.$time_from.'",time_to:"'.$time_to.'", limit: '.$limit.', page: '.$page.') {   
+                 ticket_list {
+                                id
+                                title
+                                desc
+                                deadline
+                                business_id
+                                created_date
+                                deadline
+                                ticket_type_id
+                                version
+                                status_id
+                                priority_id
+                                custom_fields
+                                parent_id
+                                version
+                                reference_user_ids
+                                assign_id
+                                owner_id
+                                }                            
+                        count_ticket
+                        }                           
+                    }';
+            $response = $this->_request->request($query);
+            if($response->__get('getTicketListnew')){
+                $ticket_list = $response->__get('getTicketListnew');
+                $ticket_list = json_decode(json_encode($ticket_list), true);
+                return $ticket_list;
             }
+            return $ticket_list;
         } catch(Exception $exception){
             addErrorsLog($exception->getMessage());
             return null;
         }
-        return null;
     }
 
     public function getLastTicketId(){
+        $ticket_id = null;
         try{
             $query = '{
               getLastTicketId{
@@ -97,26 +119,23 @@ class TicketSdk extends Sdk {
             addErrorsLog($exception->getMessage());
             return null;
         }
-        return null;
     }
 
-    public function getRelationTickets($parent_id, $ticket_type_id, $version){
+    public function getRelationTickets($parent_id){
+        $relation_tickets = null;
         try{
-            if($parent_id && $ticket_type_id && $version){
+            if($parent_id){
                 $query = '{
-                  getRelationTickets(parent_id: ' . $parent_id . ', ticket_type_id:'.$ticket_type_id.', version:'.$version.'){
+                  getRelationTickets(parent_id: '. $parent_id .'){
                     id   
                     title             
                     ticket_type_id
                     custom_fields
+                    config_view
+                    parent_id
+                    deadline
                     version 
-                    assign{
-                        id
-                        username
-                        firstname
-                        lastname
-                        fullname
-                    }
+                    assign{id email fullname username}
                     status {id name}
                   }
                 }';
@@ -126,21 +145,22 @@ class TicketSdk extends Sdk {
                     $relation_tickets = json_decode(json_encode($relation_tickets), true);
                     return $relation_tickets;
                 }
+            } else {
+                addErrorsLog("getRelationTickets: Check your parent_id");
             }
-
+            return $relation_tickets;
         } catch(Exception $exception){
             addErrorsLog($exception->getMessage());
             return null;
         }
-        return null;
     }
 
-    public function createTicket($ticket_info){
+    public function create($ticket_info){
         try{
             $user = null;
             $assign_id = isset($ticket_info['assign_id']) ? $ticket_info['assign_id'] : 0;
             $query_assign = '{
-                          getUser(id: ' . $assign_id . ' ){
+                          getUser(user_id: ' . $assign_id . ' ){
                             id
                             username
                             email
@@ -154,7 +174,7 @@ class TicketSdk extends Sdk {
                 $user = json_decode(json_encode($user), true);
             }
 
-            if (isset($user['id'])) {
+            if (is_array($user) && isset($user['id']) && $user['id']) {
                 $create_params = '';
                 $ticket_type = isset($ticket_info['ticket_type']) ? $ticket_info['ticket_type'] : null;
                 foreach ($ticket_info as $key => $v) {
@@ -170,12 +190,10 @@ class TicketSdk extends Sdk {
                             }
                             $create_params .= ', ' . $key . ': "' . trim($v) . '"';
                         }
-
                     }
                 }
 
                 $create_params = trim($create_params, ', ');
-
                 $create_ticket = 'mutation {
                           createTicket(' . $create_params . '){
                             id
@@ -186,6 +204,7 @@ class TicketSdk extends Sdk {
                             created_date
                             ticket_type_id
                             custom_fields
+                            config_view                            
                             reference_user_ids
                             group {id name}
                             status {id name}
@@ -194,13 +213,15 @@ class TicketSdk extends Sdk {
                             assign{id email fullname username}
                           }
                         }';
+                $this->_request->setUrl(getenv('GATEWAY_URL').'/shorthand.php');
                 $result = $this->_request->request($create_ticket, array('ticket_type' => $ticket_type));
+                printValues($result);
                 if($result->__get('createTicket')){
                     $ticket = $result->__get('createTicket');
                     $ticket = resolveCustomFields(json_decode(json_encode($ticket), true));
                     return $ticket;
                 } else {
-                    addErrorsLog($result);
+                    addErrorsLog("Create Ticket: ".$result);
                     return null;
                 }
             } else {
@@ -215,16 +236,15 @@ class TicketSdk extends Sdk {
 
     public function updateTicket($ticket_info){
         try {
-            $params = $ticket_info;
             $update_params = '';
-            $ticket_type = isset($params['ticket_type']) ? $params['ticket_type'] : null;
-            unset($params['ticket_type']);
-            if (key_exists('id', $params)) {
-                $params['id_data_type'] = 'Int';
+            $ticket_type = isset($ticket_info['ticket_type']) ? $ticket_info['ticket_type'] : null;
+            unset($ticket_info['ticket_type']);
+            if (key_exists('id', $ticket_info)) {
+                $ticket_info['id_data_type'] = 'Int';
             }
-            foreach ($params as $key => $v) {
-                if (key_exists($key . '_data_type', $params)) {
-                    if ($params[$key . '_data_type'] == 'Int' || $params[$key . '_data_type'] == 'Number') {
+            foreach ($ticket_info as $key => $v) {
+                if (key_exists($key . '_data_type', $ticket_info)) {
+                    if ($ticket_info[$key . '_data_type'] == 'Int' || $ticket_info[$key . '_data_type'] == 'Number') {
                         $update_params .= ', ' . $key . ': ' . $v;
                     } else {
                         if (is_array($v)) {
