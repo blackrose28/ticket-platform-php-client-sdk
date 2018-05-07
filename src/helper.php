@@ -14,3 +14,30 @@ function resolveCustomFields($ticket){
 function addErrorsLog($message){
     error_log("\n".date('Y/m/d H:i:s')." -> ".__FILE__."- line ".__LINE__.": \n".$message, 3, "errors.log");
 }
+
+function connectGateway($params = null)
+{
+    $gateway = getenv('GATEWAY_URL').'/shorthand.php';
+    $curl = curl_init();
+    $args = array(
+        CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_URL => $gateway
+    );
+    if ($params) {
+        $args[CURLOPT_POST] = 1;
+        $args[CURLOPT_POSTFIELDS] = $params;
+    }
+    curl_setopt_array($curl, $args);
+    $resp = curl_exec($curl);
+    curl_close($curl);
+    $resp = json_decode($resp, true);
+    return $resp;
+}
+
+function replaceSpecialCharacter($string)
+{
+    $escapers = array("\\", "/", "\"", "\n", "\r", "\t", "\x08", "\x0c");
+    $replacements = array("\\\\", "\\/", "######", "\\n", "\\r", "\\t", "\\f", "\\b");
+    $result = str_replace($escapers, $replacements, $string);
+    return $result;
+}
