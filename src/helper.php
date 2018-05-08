@@ -34,7 +34,7 @@ function connectGateway($params = null)
     return $resp;
 }
 
-function replaceSpecialCharacter($string)
+function replaceSpecialCharacters($string)
 {
     $escapers = array("\\", "/", "\"", "\n", "\r", "\t", "\x08", "\x0c");
     $replacements = array("\\\\", "\\/", "######", "\\n", "\\r", "\\t", "\\f", "\\b");

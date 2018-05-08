@@ -186,7 +186,7 @@ class TicketSdk extends Sdk {
                             if (is_array($v)) {
                                 $v = rtrim(implode(',', $v), ',');
                             }
-                            $create_params .= ', ' . $key . ': "' . replaceSpecialCharacter(trim($v)) . '"';
+                            $create_params .= ', ' . $key . ': "' . replaceSpecialCharacters(trim($v)) . '"';
                         }
                     }
                 }
@@ -279,7 +279,7 @@ class TicketSdk extends Sdk {
 //                                    if (is_array($v)) {
 //                                        $v = rtrim(implode(',', $v), ',');
 //                                    }
-//                                    $create_params .= ', ' . $key . ': "' . replaceSpecialCharacter(trim($v)) . '"';
+//                                    $create_params .= ', ' . $key . ': "' . replaceSpecialCharacters(trim($v)) . '"';
 //                                }
 //                            }
 //                        }
