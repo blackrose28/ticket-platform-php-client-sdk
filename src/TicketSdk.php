@@ -239,101 +239,72 @@ class TicketSdk extends Sdk {
             return null;
         }
     }
+    public function updateTicket($ticket_info){
+        try {
+            if(is_array($ticket_info)){
+                $breakStep = false;
+                $user = null;
+                if (isset($ticket_info['assign_id'])) {
+                    $assign_id = $ticket_info['assign_id'];
+                    $query_assign = '{
+                          getUser(user_id: ' . $assign_id . ' ){
+                            id
+                            username
+                            email
+                            fullname
+                          }
+                      }';
+                    $response = $this->_request->request($query_assign);
+                    if($response->__get('getUser')){
+                        $user = $response->__get('getUser');
+                        $user = json_decode(json_encode($user), true);
+                    }
+                } else {
+                    $user = [];
+                    $breakStep = true;
+                }
 
-//    public function updateTicket($ticket_info){
-//        try {
-//            if(is_array($ticket_info)){
-//                $breakStep = false;
-//                $user = null;
-//                if (isset($ticket_info['assign_id'])) {
-//                    $assign_id = $ticket_info['assign_id'];
-//                    $query_assign = '{
-//                          getUser(user_id: ' . $assign_id . ' ){
-//                            id
-//                            username
-//                            email
-//                            fullname
-//                          }
-//                      }';
-//                    $response = $this->_request->request($query_assign);
-//                    if($response->__get('getUser')){
-//                        $user = $response->__get('getUser');
-//                        $user = json_decode(json_encode($user), true);
-//                    }
-//                } else {
-//                    $user = [];
-//                    $breakStep = true;
-//                }
-//
-//                if(is_array($user)) {
-//                    if ((isset($user['id']) && $user['id']) || $breakStep) {
-////                        $ticket_info = str_replace('"', '!!!###', $ticket_info);
-//                        foreach ($ticket_info as $key => &$v) {
-//                            if(is_array($v)){
-//                                $v = implode(",",$v);
-//                            }
-//                            if (key_exists($key . '_data_type', $ticket_info)) {
-//                                if ($ticket_info[$key . '_data_type'] == 'Int' || $ticket_info[$key . '_data_type'] == 'Number') {
-//                                    $create_params .= ', ' . $key . ': ' . trim($v);
-//                                } else {
-//                                    if (is_array($v)) {
-//                                        $v = rtrim(implode(',', $v), ',');
-//                                    }
-//                                    $create_params .= ', ' . $key . ': "' . replaceSpecialCharacters(trim($v)) . '"';
-//                                }
-//                            }
-//                        }
-//                        $data = json_encode($ticket_info, true);
-////                        printValues($data);
-//                        $mutation = 'mutation {
-//                          updateTicket(data:"' . $data . '"){
-//                            id
-//                            title
-//                            desc
-//                            deadline
-//                            created_date
-//                            ticket_type_id
-//                            custom_fields
-//                            version
-//                            reference_user_ids
-//                            group {id name}
-//                            status {id name}
-//                            priority{id name}
-//                            owner{id email fullname username}
-//                            assign{id email fullname username}
-//                          }
-//                        }';
-//
-//                        //$ticket_info = array('info' => json_encode($params, true));
-////                        $params = array('query' => $mutation);
-////                        $params = json_encode($params, true);
-//
-////                        $resp = connectGatewayJs($params);
-////                        $ticket = null;
-////                        if (isset($resp['data']['updateTicket']) && $resp['data']['updateTicket']) {
-////                            $ticket = $resp['data']['updateTicket'];
-////                            $ticket = resolveCustomFields($ticket);
-////                        }
-//
-//                        $response = $this->_request->request($mutation);
-//                        if($response->__get('updateTicket')){
-//                            $ticket = $response->__get('updateTicket');
-//                            $ticket = json_decode(json_encode($ticket), true);
-//                            $ticket = resolveCustomFields($ticket);
-//                            return $ticket;
-//                        }
-//                    } else {
-//                        addErrorsLog("Update Ticket: assigned user doesn't exist.");
-//                    }
-//                } else {
-//                    addErrorsLog("Update Ticket: assigned user doesn't exist.");
-//                }
-//            } else {
-//                addErrorsLog("Update Ticket: check your parameter");
-//            }
-//        } catch(Exception $exception){
-//            addErrorsLog($exception->getMessage());
-//            return null;
-//        }
-//    }
+                if(is_array($user)) {
+                    if ((isset($user['id']) && $user['id']) || $breakStep) {
+                        $ticket_info = json_encode($ticket_info, true);
+                        $data = str_replace('"', '!!!###', $ticket_info);
+                        $mutation = 'mutation {
+                          updateTicket(data:"' . $data . '"){
+                            id
+                            title
+                            desc
+                            deadline
+                            created_date
+                            ticket_type_id
+                            custom_fields
+                            version
+                            reference_user_ids
+                            group {id name}
+                            status {id name}
+                            priority{id name}
+                            owner{id email fullname username}
+                            assign{id email fullname username}
+                          }
+                        }';
+                        $response = $this->_request->request($mutation);
+                        if($response->__get('updateTicket')){
+                            $ticket = $response->__get('updateTicket');
+                            $ticket = json_decode(json_encode($ticket), true);
+                            $ticket = resolveCustomFields($ticket);
+                            return $ticket;
+                        }
+                    } else {
+                        addErrorsLog("Update Ticket: assigned user doesn't exist.");
+                    }
+                } else {
+                    addErrorsLog("Update Ticket: assigned user doesn't exist.");
+                }
+            } else {
+                addErrorsLog("Update Ticket: check your parameter");
+            }
+        } catch(Exception $exception){
+            addErrorsLog($exception->getMessage());
+            return null;
+        }
+    }
 }
