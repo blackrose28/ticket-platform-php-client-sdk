@@ -1,6 +1,6 @@
 <?php
 
-function resolveCustomFields($ticket){
+function resolveCustomField($ticket){
     $custom_fields = json_decode($ticket['custom_fields'], true);
     if(count($custom_fields)){
         foreach ($custom_fields as $key => $val){
