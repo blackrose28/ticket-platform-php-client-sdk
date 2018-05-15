@@ -37,7 +37,9 @@ class UserSdk extends Sdk {
                     id,
                     name,
                     child_ids,
+                    parent_id,
                     childs{
+                        parent_id,
                         id,
                         name
                     }
