@@ -116,4 +116,27 @@ class BusinessSDK extends Sdk{
             echo $exception->getMessage();
         }
     }
+    //getBusinessByUserDepartment
+    public function getBusinessByUserDepartment($user_id, $department_id){
+        try{
+            $query = '{
+             getBusinessByUserDepartment(user_id: ' . $user_id . ', department_id: '.$department_id.'){
+                    id,
+                    name,
+                    description,
+                    main_ticket_type_id,
+                    department_id,
+                    user_id
+                  }
+            }';
+            $resp = $this->_request->request($query);
+            if ($resp->__get('getBusinessByUserDepartment')) {
+                $business = \GuzzleHttp\json_encode($resp->__get('getBusinessByUserDepartment'));
+                $business = \GuzzleHttp\json_decode($business, true);
+                return $business;
+            }
+        } catch (Exception $exception){
+            echo $exception->getMessage();
+        }
+    }
 }
