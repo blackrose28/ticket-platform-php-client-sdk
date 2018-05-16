@@ -37,7 +37,7 @@ function connectGateway($params = null)
 function replaceSpecialCharacters($string)
 {
     $escapers = array("\\", "/", "\"", "\n", "\r", "\t", "\x08", "\x0c");
-    $replacements = array("\\\\", "\\/", "######", "\\n", "\\r", "\\t", "\\f", "\\b");
+    $replacements = array("\\\\", "\\/", md5('$2y$10$I8Lau6vInSADmcUaxGWxP.U7wR4Vg7GD4F5U9h212Vy3LDnzb4hUK'), md5('$2y$10$n5B97hwNQUZMTJ3cujs8merJ9bH4sU14TU/vBlRQSoOAc2cQCcDwC'), "\\r", "\\t", "\\f", "\\b");
     $result = str_replace($escapers, $replacements, $string);
     return $result;
 }
