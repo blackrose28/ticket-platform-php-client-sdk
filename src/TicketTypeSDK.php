@@ -209,6 +209,7 @@ class TicketTypeSDK extends Sdk{
     //edit ticket type
     public function editTicketType($datas){
         $data = str_replace('"', '!!!###', $datas);
+        $data = base64_encode($data);
         try {
             $mutation = 'mutation{
                 editTicketType(data:"' . $data . '"){
