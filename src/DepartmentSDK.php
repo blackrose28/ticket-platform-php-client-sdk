@@ -26,7 +26,7 @@ class DepartmentSDK extends Sdk
             echo $exception->getMessage();
         }
     }
-    
+
     public function getDepartment($department_id){
         try{
             $query = '{
