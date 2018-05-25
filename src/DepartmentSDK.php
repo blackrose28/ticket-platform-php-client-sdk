@@ -51,4 +51,29 @@ class DepartmentSDK extends Sdk
             echo $exception->getMessage();
         }
     }
+    public function getTreeDepartments(){
+        try{
+            $query = '{
+                      getTreeDepartments{
+                        id
+                        name
+                        child_ids
+                        parent_id
+                        childs{
+                          id
+                          name
+                          parent_id
+                        }
+                      }
+                    }';
+            $resp = $this->_request->request($query);
+            if ($resp->__get('getTreeDepartments')) {
+                $department = \GuzzleHttp\json_encode($resp->__get('getTreeDepartments'));
+                $department = \GuzzleHttp\json_decode($department, true);
+                return $department;
+            }
+        } catch (Exception $exception){
+            echo $exception->getMessage();
+        }
+    }
 }
