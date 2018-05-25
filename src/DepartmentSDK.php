@@ -39,6 +39,11 @@ class DepartmentSDK extends Sdk
                             id
                             name
                         }
+                        parent_id
+                        parent{
+                            id
+                            name
+                        }
                       }
                     }';
             $resp = $this->_request->request($query);
@@ -51,6 +56,7 @@ class DepartmentSDK extends Sdk
             echo $exception->getMessage();
         }
     }
+
     public function getTreeDepartments(){
         try{
             $query = '{
@@ -74,6 +80,68 @@ class DepartmentSDK extends Sdk
             }
         } catch (Exception $exception){
             echo $exception->getMessage();
+        }
+    }
+
+    public function initDepartment($name, $description, $parent_id, $user_id){
+        try {
+            if ($name != '' && $parent_id != 0 && $user_id != 0) {
+                $mutation = 'mutation{
+                      initDepartment(name: "'.$name.'", description: "'.$description.'", parent_id: '.$parent_id.', user_id:'.$user_id.'){
+                        id
+                        name
+                        description
+                        child_ids
+                        parent_id
+                        parent{
+                            id
+                            name
+                        }
+                        childs{
+                            id
+                            name
+                            parent_id
+                        }
+                      }
+                    }';
+                $resp = $this->_request->request($mutation);
+                if ($resp->__get('initDepartment')) {
+                    $department = \GuzzleHttp\json_encode($resp->__get('initDepartment'));
+                    $department = \GuzzleHttp\json_decode($department, true);
+                    return $department;
+                }
+            }else{
+                return false;
+            }
+        }catch (Exception $exception){
+            addErrorsLog($exception->getMessage());
+            return null;
+        }
+    }
+
+    public function updateDepartment($name, $description, $department_id, $parent_id){
+        try {
+            if ($name != '' && $department_id != 0 && $parent_id != 0) {
+                $mutation = 'mutation{
+                      updateDepartment(id: '.$department_id.',name: "'.$name.'", description: "'.$description.'", parent_id: '.$parent_id.'){
+                        id
+                        name
+                        description
+                        parent_id
+                      }
+                    }';
+                $resp = $this->_request->request($mutation);
+                if ($resp->__get('updateDepartment')) {
+                    $department = \GuzzleHttp\json_encode($resp->__get('updateDepartment'));
+                    $department = \GuzzleHttp\json_decode($department, true);
+                    return $department;
+                }
+            }else{
+                return false;
+            }
+        }catch (Exception $exception){
+            addErrorsLog($exception->getMessage());
+            return null;
         }
     }
 }
