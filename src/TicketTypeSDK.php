@@ -169,6 +169,13 @@ class TicketTypeSDK extends Sdk{
                                ...detail_field
                             }
                         },
+                        result_field {
+                            name,
+                            ticket_type_name,
+                            fields{
+                               ...detail_field
+                            }
+                        },
                         general_field{
                             fields{
                                 name,
@@ -237,6 +244,13 @@ class TicketTypeSDK extends Sdk{
                         version,
                         business_id,
                         specific_field {
+                            name,
+                            ticket_type_name,
+                            fields{
+                               ...detail_field
+                            }
+                        },
+                        result_field {
                             name,
                             ticket_type_name,
                             fields{
