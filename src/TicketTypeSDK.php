@@ -152,6 +152,7 @@ class TicketTypeSDK extends Sdk{
                         main,
                         version,
                         business_id,
+                        group_require,
                         format{
                             name
                         },
@@ -243,6 +244,7 @@ class TicketTypeSDK extends Sdk{
                         main,
                         version,
                         business_id,
+                        group_require,
                         specific_field {
                             name,
                             ticket_type_name,
