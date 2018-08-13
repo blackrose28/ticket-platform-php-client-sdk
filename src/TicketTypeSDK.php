@@ -200,7 +200,8 @@ class TicketTypeSDK extends Sdk{
                     ticket_type_name,
                     ticket_type_id,
                     field_key,
-                    field_search
+                    field_search,
+                    require_statistical
                     }
                 ';
             $resp = $this->_request->request($query);
@@ -278,7 +279,8 @@ class TicketTypeSDK extends Sdk{
                     data_type,
                     default,
                     default_value,
-                    ticket_type_name
+                    ticket_type_name,
+                    require_statistical
                     }
                 ';
             $resp = $this->_request->request($query);
